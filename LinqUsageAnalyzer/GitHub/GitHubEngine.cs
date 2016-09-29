@@ -13,7 +13,7 @@ namespace LinqUsageAnalyzer.GitHub
 
         public GitHubEngine()
         {
-            _gitHubClient = new GitHubClient(new ProductHeaderValue("TestGitHubAPI"));
+            _gitHubClient = new GitHubClient(new ProductHeaderValue("TestGitHubAPI"), new CredentialsStore());
         }
 
         public async Task<SearchRepositoryResult> FindCSharpRepositoriesAsync(int fromPage = 0)
