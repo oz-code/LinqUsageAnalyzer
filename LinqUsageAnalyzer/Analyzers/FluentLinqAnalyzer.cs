@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using LinqUsageAnalyzer.Interfaces;
 using Microsoft.CodeAnalysis;
@@ -11,12 +12,13 @@ namespace LinqUsageAnalyzer.Analyzers
         private const string LinqDeclaration = "System.Linq.Enumerable";
 
         private readonly SyntaxNode _root;
-        private readonly SemanticModel _semantic;
+        private readonly SemanticModel _semanticModel;
+        private static ImmutableHashSet<string> _LINQOperatorNames;
 
-        public FluentLinqAnalyzer(SemanticModel semantic)
+        public FluentLinqAnalyzer(SemanticModel semanticModel)
         {
-            _semantic = semantic;
-            _root = semantic.SyntaxTree.GetRoot();
+            _semanticModel = semanticModel;
+            _root = semanticModel.SyntaxTree.GetRoot();
 
         }
         public bool HasRelevantLinqQueries()
@@ -31,7 +33,7 @@ namespace LinqUsageAnalyzer.Analyzers
             var result = new RepositoryCounters();
             foreach (InvocationExpressionSyntax fluentExpressionSyntax in linqNodes)
             {
-                SymbolInfo symbolInfo = _semantic.GetSymbolInfo(fluentExpressionSyntax);
+                SymbolInfo symbolInfo = _semanticModel.GetSymbolInfo(fluentExpressionSyntax);
                 IMethodSymbol symbol = symbolInfo.Symbol as IMethodSymbol;
 
                 if (symbol != null && symbol.ConstructedFrom.ContainingType.ToString() == LinqDeclaration)
@@ -45,8 +47,22 @@ namespace LinqUsageAnalyzer.Analyzers
 
         private IEnumerable<InvocationExpressionSyntax> GetFluentLinqNodes()
         {
-            return _root.DescendantNodes().
-                OfType<InvocationExpressionSyntax>();
+            return _root
+                    .DescendantNodes()
+                    .OfType<InvocationExpressionSyntax>()
+                    .Where(i => GetLINQOperatorNames().Contains(GetInvokedMethodName(i)));
+        }
+
+        private static string GetInvokedMethodName(InvocationExpressionSyntax i)
+        {
+
+            var memberAccess = i.Expression as MemberAccessExpressionSyntax;
+            return memberAccess?.Name?.ToString() ?? string.Empty; 
+        }
+
+        private ImmutableHashSet<string> GetLINQOperatorNames()
+        {
+            return _LINQOperatorNames ?? (_LINQOperatorNames = _semanticModel.Compilation.GetTypeByMetadataName("System.Linq.Enumerable").GetMembers().Select(m => m.Name).ToImmutableHashSet());
         }
     }
 }

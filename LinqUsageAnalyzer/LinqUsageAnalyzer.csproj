@@ -205,6 +205,7 @@
     <Compile Include="DAL\StatisticsDO.cs" />
     <Compile Include="Extensions\SemanticModelExtension.cs" />
     <Compile Include="FileEngine.cs" />
+    <Compile Include="GitHub\CredentialStore.cs" />
     <Compile Include="GitHub\GitHubEngine.cs" />
     <Compile Include="Interfaces\ICodeRepository.cs" />
     <Compile Include="Interfaces\IFileAnalyzer.cs" />
