@@ -213,6 +213,7 @@
     <Compile Include="Interfaces\RepositoryStatistics.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SemanticModelAnalyzer.cs" />
     <Compile Include="SemanticModelFactory.cs" />
   </ItemGroup>
   <ItemGroup>
