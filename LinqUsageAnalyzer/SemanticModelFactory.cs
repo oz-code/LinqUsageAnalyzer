@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reactive.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
@@ -11,9 +9,13 @@ using NLog;
 
 namespace LinqUsageAnalyzer
 {
-    class SemanticModelFactory
+    public class SemanticModelFactory
     {
-        private ILogger _log;
+        private readonly ILogger _log;
+        private readonly HashSet<string> _ignoredFiles = new HashSet<string>
+        {
+            "AssemblyInfo.cs", ".NETFramework,Version=v4.6.1.AssemblyAttributes.cs"
+        };
 
         public SemanticModelFactory()
         {
@@ -24,12 +26,13 @@ namespace LinqUsageAnalyzer
         {
             return Observable.Create<SemanticModel>(
                 async obs =>await GetSematicModelAsync(projectFolder, obs))
+                .Distinct(model => model.SyntaxTree.FilePath)
                 .ToEnumerable();
         }
 
         private async Task GetSematicModelAsync(string projectFolder, IObserver<SemanticModel> obs)
         {
-            var solutionFiles = FindSlnInFolder(projectFolder);
+            var solutionFiles = FindSolutionFilesInFolder(projectFolder);
 
             foreach (var solutionFile in solutionFiles)
             {
@@ -44,6 +47,11 @@ namespace LinqUsageAnalyzer
 
                         foreach (var document in project.Documents)
                         {
+                            if (_ignoredFiles.Contains(document.Name))
+                            {
+                                continue;
+                            }
+
                             if (!document.SupportsSyntaxTree || !document.SupportsSemanticModel)
                             {
                                 continue;
@@ -71,7 +79,7 @@ namespace LinqUsageAnalyzer
             obs.OnCompleted();
         }
 
-        private IEnumerable<string> FindSlnInFolder(string projectFolder)
+        private IEnumerable<string> FindSolutionFilesInFolder(string projectFolder)
         {
             return Directory.GetFiles(projectFolder, "*.sln", SearchOption.AllDirectories);
         }

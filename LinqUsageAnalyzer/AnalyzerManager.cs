@@ -96,10 +96,9 @@ namespace LinqUsageAnalyzer
 
         private async Task<RepositoryStatistics> AnalizeProjectAsync(Repository repository)
         {
-            var fixedRepository = await _codeRepository.GetRepositoryAsync(repository);
             _log.Log(LogLevel.Trace, "-- Downloading repository code --");
             var downloaded =
-                await _codeRepository.DownloadSourceRepositoryCodeAsync(fixedRepository, ProjectTempDownloadDirectory);
+                await _codeRepository.DownloadSourceRepositoryCodeAsync(repository, ProjectTempDownloadDirectory);
 
             _log.Log(LogLevel.Trace, "-- Extracting archive --");
 

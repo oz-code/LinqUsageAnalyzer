@@ -17,7 +17,7 @@ namespace LinqUsageAnalyzer
 
         public void Analyze(SemanticModel semanticModel, RepositoryStatistics statistics)
         {
-            statistics.LinesOfCode = semanticModel.GetNumberOfLines();
+            statistics.LinesOfCode += semanticModel.GetNumberOfLines();
 
             AnalizeLinq(new QueryLinqAnalyzer(semanticModel), statistics);
             AnalizeLinq(new FluentLinqAnalyzer(semanticModel), statistics);

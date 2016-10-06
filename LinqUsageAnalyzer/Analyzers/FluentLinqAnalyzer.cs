@@ -13,7 +13,7 @@ namespace LinqUsageAnalyzer.Analyzers
 
         private readonly SyntaxNode _root;
         private readonly SemanticModel _semanticModel;
-        private static ImmutableHashSet<string> _LINQOperatorNames;
+        private static ImmutableHashSet<string> _linqOperatorNames;
 
         public FluentLinqAnalyzer(SemanticModel semanticModel)
         {
@@ -50,7 +50,7 @@ namespace LinqUsageAnalyzer.Analyzers
             return _root
                     .DescendantNodes()
                     .OfType<InvocationExpressionSyntax>()
-                    .Where(i => GetLINQOperatorNames().Contains(GetInvokedMethodName(i)));
+                    .Where(i => GetLinqOperatorNames().Contains(GetInvokedMethodName(i)));
         }
 
         private static string GetInvokedMethodName(InvocationExpressionSyntax i)
@@ -60,9 +60,9 @@ namespace LinqUsageAnalyzer.Analyzers
             return memberAccess?.Name?.ToString() ?? string.Empty; 
         }
 
-        private ImmutableHashSet<string> GetLINQOperatorNames()
+        private ImmutableHashSet<string> GetLinqOperatorNames()
         {
-            return _LINQOperatorNames ?? (_LINQOperatorNames = _semanticModel.Compilation.GetTypeByMetadataName("System.Linq.Enumerable").GetMembers().Select(m => m.Name).ToImmutableHashSet());
+            return _linqOperatorNames ?? (_linqOperatorNames = _semanticModel.Compilation.GetTypeByMetadataName("System.Linq.Enumerable").GetMembers().Select(m => m.Name).ToImmutableHashSet());
         }
     }
 }

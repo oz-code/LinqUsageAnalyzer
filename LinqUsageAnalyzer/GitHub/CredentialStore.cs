@@ -7,7 +7,7 @@ namespace LinqUsageAnalyzer.GitHub
     {
         public Task<Credentials> GetCredentials()
         {
-            return Task.Run(() => new Credentials("username", "password"));
+            return Task.Run(() => new Credentials("omerraviv", "raviOM34"));
         }
     }
 

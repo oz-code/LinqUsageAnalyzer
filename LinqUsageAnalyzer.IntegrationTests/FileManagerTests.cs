@@ -11,25 +11,6 @@ namespace LinqUsageAnalyzer.IntegrationTests
     {
         private const string DemoProjectZip = "demo_project.zip";
 
-        private string ExtractResource(string fileName)
-        {
-            var tragetFile = Path.Combine(Path.GetTempPath(), fileName);
-
-            Assembly a = Assembly.GetExecutingAssembly();
-
-            using (Stream resourceStream = a.GetManifestResourceStream(@"LinqUsageAnalyzer.IntegrationTests.TestFiles." + fileName))
-            using(var fileStream =  File.Open(tragetFile, FileMode.Create))
-            {
-                for (int i = 0; i < resourceStream.Length; i++)
-                {
-                    fileStream.WriteByte((byte)resourceStream.ReadByte());
-                }
-                fileStream.Close();
-            }
-
-            return tragetFile;
-        }
-
         [SetUp]
         public void CleanFolder()
         {
@@ -46,7 +27,7 @@ namespace LinqUsageAnalyzer.IntegrationTests
         {
             var fileManager = new FileEngine();
 
-            var fileName = ExtractResource(DemoProjectZip);
+            var fileName = TestUtilities.ExtractResource(DemoProjectZip);
 
             var resultFolder = fileManager.Extract(fileName);
 
@@ -59,7 +40,7 @@ namespace LinqUsageAnalyzer.IntegrationTests
         {
             var fileManager = new FileEngine();
 
-            var fileName = ExtractResource(DemoProjectZip);
+            var fileName = TestUtilities.ExtractResource(DemoProjectZip);
 
             var resultFolder = fileManager.Extract(fileName);
             resultFolder = fileManager.Extract(fileName);

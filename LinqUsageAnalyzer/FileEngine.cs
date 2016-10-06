@@ -12,8 +12,7 @@ namespace LinqUsageAnalyzer
 
             if (Directory.Exists(destinationDirectoryName))
             {
-                return destinationDirectoryName; // TODO: for demo purposes
-                //Directory.Delete(destinationDirectoryName, true);
+                Directory.Delete(destinationDirectoryName, true);
             }
             ZipFile.ExtractToDirectory(filename, destinationDirectoryName);
 
