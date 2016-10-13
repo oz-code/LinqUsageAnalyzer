@@ -17,18 +17,14 @@ namespace LinqUsageAnalyzer
             "dapper-dot-net",
             "corefx",
             "monodroid-samples",
-            "shadowsocks-windows",
             "mono",
             "mobile-samples",
             "xamarin-forms-samples",
             "coreclr",
             "roslyn",
-            "SignalR",
             "PowerShell",
             "CodeHub",
-            "EntityFramework",
             "SpaceEngineers",
-            "ServiceStack",
             "RestSharp",
             "Mvc",
             "SparkleShare",
@@ -67,7 +63,13 @@ namespace LinqUsageAnalyzer
 
                 foreach (var repository in result.Items)
                 {
+
                     if (IgnoredRepositories.Contains(repository.Name))
+                    {
+                        continue;
+                    }
+
+                    if (_statisticsRepository.RepositoryExist(repository.Name))
                     {
                         continue;
                     }
@@ -75,12 +77,13 @@ namespace LinqUsageAnalyzer
                     try
                     {
                         _log.Log(LogLevel.Info, "Starting analysis for {0}", repository.Name);
-
                         var statistics = await AnalizeProjectAsync(repository);
 
                         _log.Debug("Found {0} LINQ Operators", statistics.Counters.LinqOperatorUsed.Sum(pair => pair.Value));
-                        // TODO: save to DB
-                        _statisticsRepository.Save(statistics);
+                        if (statistics.AnalyzedModels > 0)
+                        {
+                            await _statisticsRepository.SaveAsync(statistics);
+                        }
                     }
                     catch (Exception exc)
                     {

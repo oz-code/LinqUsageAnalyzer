@@ -1,37 +1,40 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
+using System.Threading.Tasks;
 using LinqUsageAnalyzer.Interfaces;
 
 namespace LinqUsageAnalyzer.DAL
 {
-
     class InMemoryStatisticsRepository : IStatisticsRepository
     {
         public List<StatisticsDO> SavedData { get; set; } = new List<StatisticsDO>();
         private readonly HashSet<LinqOperator> _linqOperatorsUsed = new HashSet<LinqOperator>();
+        private readonly StatisticsMapper _mapper;
 
         public InMemoryStatisticsRepository()
         {
-            Mapper.Initialize(cfg =>
-                cfg.CreateMap<RepositoryStatistics, StatisticsDO>()
-                    .ForMember(x => x.QueryLinqFound, opt => opt.Ignore())
-                    .ForMember(x => x.FluentLinqFound, opt => opt.Ignore()));
+            _mapper = new StatisticsMapper();
 
         }
 
-        public void Save(RepositoryStatistics statistics)
+        public Task SaveAsync(RepositoryStatistics statistics)
         {
             UpdateExistingQueries(statistics);
 
             var data = CreateDataObject(statistics);
 
             SavedData.Add(data);
+
+            return Task.FromResult(true);
+        }
+
+        public bool RepositoryExist(string repositoryName)
+        {
+            return false;
         }
 
         private StatisticsDO CreateDataObject(RepositoryStatistics statistics)
         {
-            var data = Mapper.Map<StatisticsDO>(statistics);
+            var data = _mapper.CreateDataObject(statistics);
 
             foreach (var linqOperator in _linqOperatorsUsed)
             {

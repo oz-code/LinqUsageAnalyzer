@@ -13,7 +13,8 @@ namespace LinqUsageAnalyzer.DAL
         }
 
         public int LinesOfCode { get; set; }
-
+        public int AnalyzedModels { get; set; }
+        
         public double LinesOfCodePerLinq
         {
             get

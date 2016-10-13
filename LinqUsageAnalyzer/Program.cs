@@ -16,7 +16,7 @@ namespace LinqUsageAnalyzer
                 maxProjects = DefaultMaxProjects;
             }
 
-            var analyzer = new AnalyzerManager(new GitHubEngine(), new FileEngine(), new InMemoryStatisticsRepository());
+            var analyzer = new AnalyzerManager(new GitHubEngine(), new FileEngine(), new MongoStatisticsRepository("LinqAnalyzer"));
 
             analyzer.StartAsync(maxProjects).Wait();
         }

@@ -47,6 +47,7 @@ namespace LinqUsageAnalyzer.Interfaces
             CreatedAt = repository.CreatedAt;
             UpdatedAt = repository.UpdatedAt;
             LinesOfCode = 0;
+            AnalyzedModels = 0;
             Counters = new RepositoryCounters();
         }
 
@@ -58,7 +59,7 @@ namespace LinqUsageAnalyzer.Interfaces
         public string HtmlUrl { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
-
-       public RepositoryCounters Counters { get; }
+        public RepositoryCounters Counters { get; }
+        public int AnalyzedModels { get; set; }
     }
 }
